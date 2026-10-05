@@ -133,6 +133,15 @@ export class AiTask {
       let delay = 700 * 2 ** attempt;
       try {
         const { response, result } = await this.provider(apiKey, body);
+        if (!response.ok || result?.error) {
+          // Log only routing/status fields; never log documents, keys or raw provider messages.
+          const providerCode = record(result?.error)?.code;
+          console.error("AI provider request failed", {
+            status: response.status,
+            providerCode: typeof providerCode === "number" && Number.isInteger(providerCode) ? providerCode : null,
+            model: typeof body.model === "string" && /^[a-z0-9_./:-]{1,120}$/i.test(body.model) ? body.model : null,
+          });
+        }
         if (!response.ok) {
           const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
           if (!retryable || attempt === 2) {
