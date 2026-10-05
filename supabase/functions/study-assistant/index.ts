@@ -85,6 +85,14 @@ function record(value: unknown): Record<string, unknown> | null {
     ? value as Record<string, unknown> : null;
 }
 
+function openRouterModel(): string {
+  const model = (Deno.env.get("OPENROUTER_MODEL") ?? "openrouter/free").trim();
+  if (model.length > 120 || !/^[a-z0-9][a-z0-9_.-]*\/[a-z0-9][a-z0-9_.:-]*$/i.test(model)) {
+    throw new AiControlError("The AI model is not configured correctly.", 500, "ai_configuration_error");
+  }
+  return model;
+}
+
 async function quotaRpc(name: string, body: Record<string, unknown>) {
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -277,7 +285,6 @@ async function beginAiTask(userId: string, type: "study-assistant" | "analyze-co
 
 
 
-const model = "stealth/space-bunny-alpha";
 const maxFiles = 8;
 const maxBatchBytes = 12 * 1024 * 1024;
 const defaultQuizQuestions = 10;
@@ -402,6 +409,7 @@ Deno.serve(async (request: Request) => {
   let task: AiTask | null = null;
   let succeeded = false;
   try {
+    const model = openRouterModel();
     const form = await request.formData();
     const prompt = String(form.get("prompt") || "").trim();
     const mode = form.get("mode") === "quiz" ? "quiz" : form.get("mode") === "chat" ? "chat" : "study";
