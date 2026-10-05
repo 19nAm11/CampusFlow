@@ -242,13 +242,13 @@ Publishing the frontend does not deploy Edge Functions or execute database migra
 npm test
 ```
 
-The suite contains **85 automated tests**:
+The suite contains **89 automated tests**:
 
 | Coverage | Tests |
 | --- | --- |
 | Study and course-analysis behavior | 22 |
 | Authentication and rejection paths | 18 |
-| AI quotas, retries, timeouts, and call budgets | 28 |
+| AI quotas, retries, timeouts, call budgets, and safe provider diagnostics | 32 |
 | PostgreSQL quota logic and permissions | 12 |
 | Safe user-facing error messages | 5 |
 
@@ -274,7 +274,7 @@ npx playwright install chromium
 npm run test:ui
 ```
 
-The browser suite uses mocked Supabase responses to exercise study conversations, quiz explanations, persistence retries, and responsive layouts. It does not write to the hosted project and is separate from the 85-test suite.
+The browser suite uses mocked Supabase responses to exercise study conversations, quiz explanations, persistence retries, and responsive layouts. It does not write to the hosted project and is separate from the 89-test suite.
 
 ## Known limitations
 
@@ -292,7 +292,7 @@ The browser suite uses mocked Supabase responses to exercise study conversations
 | Frontend cannot reach Supabase | Project URL, publishable key, and network access |
 | AI requests fail in the browser | Exact `ALLOWED_ORIGIN`, signed-in session, and deployed functions |
 | AI usage checks fail | Quota migration, RPC permissions, and backend environment |
-| Provider generation fails | OpenRouter credential, account limits, and model availability |
+| Provider generation fails | Find `AI provider request failed` in Edge Function logs for the upstream HTTP status and numeric provider code; check OpenRouter credentials, account limits, request parameters, and model availability. Raw provider messages and document contents are not logged. |
 | Saving or loading fails | Applied migrations, authenticated session, and ownership policies |
 | Email confirmation returns to the wrong page | Supabase Site URL and allowed redirect URLs |
 | Local port 5500 is occupied | Stop the process using the port before restarting |
