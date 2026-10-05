@@ -45,7 +45,13 @@ signupForm.addEventListener("submit", async function(event) {
 
     if (error) {
         console.error("Could not create account:", error);
-        showStatus("Could not create your account. Please check your details and try again.", true);
+        let message = "Could not create your account. Please check your details and try again.";
+        if (error.code === "over_email_send_rate_limit") {
+            message = "Confirmation emails are temporarily limited. Please wait before trying again.";
+        } else if (error.code === "over_request_rate_limit" || error.status === 429) {
+            message = "Too many signup attempts. Please wait and try again later.";
+        }
+        showStatus(message, true);
         return;
     }
 
