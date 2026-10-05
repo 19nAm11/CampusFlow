@@ -1,0 +1,22 @@
+{
+  "name": "campusflow",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-assisted course summaries and study practice",
+  "engines": {
+    "node": ">=24.20.0 <25"
+  },
+  "scripts": {
+    "start": "node tools/serve.cjs",
+    "test": "node --experimental-transform-types --test tests/*.test.mjs",
+    "test:ui": "node tests/study-practice-ui.cjs",
+    "supabase:login": "npx --yes supabase@2.119.0 login",
+    "deploy:auth": "node tools/deploy-auth.cjs",
+    "build:edge:dashboard": "node tools/build-edge-dashboard.cjs",
+    "test:auth:live": "node tools/check-live-auth.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8"
+  }
+}

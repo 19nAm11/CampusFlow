@@ -1,0 +1,11 @@
+FICTIONAL DEMO MATERIAL — NOT A REAL UNIVERSITY COURSE
+
+Course: MAT110 - Calculus I
+Term: Fall 2026
+Course period: September 1, 2026 to December 15, 2026
+Classes: Tuesdays and Thursdays, 1:00 PM to 2:15 PM, America/New_York
+
+Topics: limits, continuity, derivatives, and applications of differentiation.
+Midterm: October 27, 2026.
+Problem sets are due Sunday at 8:00 PM.
+Important detail: show intermediate steps; final answers alone do not receive full credit.

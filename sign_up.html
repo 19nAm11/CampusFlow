@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <!-- SIGN UP NAVBAR -->
+    <nav class="navbar signup-navbar">
+
+        <!-- Logo -> index.html -->
+        <a href="index.html" class="logo">
+            <!-- <div class="logo-icon">C</div> -->
+            <span class="logo-text">
+                Campus<span>Flow</span>
+            </span>
+        </a>
+
+        <!-- Sign In -->
+        <div class="nav-links">
+            <a href="sign_in.html" class="btn signin">
+                Sign In
+            </a>
+        </div>
+
+    </nav>
+
+
+    <!-- SIGN UP CONTENT -->
+    <main class="signup-page">
+
+        <div class="signup-container">
+            <!-- Logo inside form -->
+            <div class="signup-logo">
+                <!-- <div class="logo-icon">C</div> -->
+                <span class="logo-text">
+                    Campus<span>Flow</span>
+                </span>
+
+            </div>
+
+
+            <h1>Create Your CampusFlow Account</h1>
+
+            <p class="signup-subtitle">
+                Sign up to get started with CampusFlow.
+            </p>
+
+
+            <form id="signup-form">
+
+                <!-- Full Name -->
+                <div class="form-group">
+
+                    <label for="fullname">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="fullname"
+                        name="fullname"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Email -->
+                <div class="form-group">
+
+                    <label for="signup-email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signup-email"
+                        name="email"
+                        placeholder="e.g., your.email@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Password -->
+                <div class="form-group">
+
+                    <label for="signup-password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="signup-password"
+                        name="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Confirm Password -->
+                <div class="form-group">
+
+                    <label for="confirm-password">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        placeholder="Confirm your password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Sign Up Button -->
+                <button
+                    type="submit"
+                    class="signup-submit"
+                >
+                    Sign Up
+                </button>
+
+                <p id="signup-status" class="form-status" role="status" aria-live="polite"></p>
+
+            </form>
+
+
+            <!-- Already have account -->
+            <p class="signin-text">
+                Already have an account?
+                <a href="sign_in.html">Sign In</a>
+            </p>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="sign_up.js"></script>
+
+</body>
+</html>

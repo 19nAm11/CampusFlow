@@ -1,0 +1,12 @@
+FICTIONAL DEMO MATERIAL — NOT A REAL UNIVERSITY COURSE
+
+Course: BIO101 - Introductory Biology
+Term: Fall 2026
+Course period: September 1, 2026 to December 15, 2026
+Classes: Mondays and Wednesdays, 10:00 AM to 11:15 AM, America/New_York
+Instructor: Dr. Taylor Example
+
+Topics: cell structure, photosynthesis, cellular respiration, genetics.
+Midterm: October 20, 2026. Covers cell structure and photosynthesis.
+Weekly homework is due Friday at 5:00 PM.
+Important detail: bring a calculator to the midterm.

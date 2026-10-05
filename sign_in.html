@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+
+    <!-- SIGN IN NAVBAR -->
+    <nav class="navbar signin-navbar">
+
+        <!-- Logo -> quay về index.html -->
+        <a href="index.html" class="logo">
+            <!-- <div class="logo-icon">C</div> -->
+            <span class="logo-text">
+                Campus<span>Flow</span>
+            </span>
+        </a>
+
+        <!-- Chỉ giữ Sign Up -->
+        <div class="nav-links">
+            <a href="sign_up.html" class="btn signup">Sign Up</a>
+        </div>
+
+    </nav>
+
+
+    <!-- SIGN IN CONTENT -->
+    <main class="signin-page">
+
+        <div class="signin-container">
+
+            <!-- Logo trong form -->
+            <div class="signin-logo">
+                <!-- <div class="logo-icon">C</div> -->
+                <span class="logo-text">
+                    Campus<span>Flow</span>
+                </span>
+            </div>
+
+            <h1>Sign In to CampusFlow</h1>
+
+            <form id="signin-form">
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="e.g., your.email@email.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+
+                <button type="submit" class="signin-submit">
+                    Sign In
+                </button>
+
+                <p id="signin-status" class="form-status" role="status" aria-live="polite"></p>
+
+            </form>
+
+
+            <!-- Forgot Password -->
+            <a href="#" class="forgot-password">
+                Forgot Password?
+            </a>
+
+
+            <!-- Sign Up -->
+            <p class="signup-text">
+                Don't have an account?
+                <a href="sign_up.html">Sign Up</a>
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="sign_in.js"></script>
+
+</body>
+</html>

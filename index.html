@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFlow</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="study.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+
+<body>
+
+    <!-- ========================================
+         NAVBAR
+    ========================================= -->
+
+    <nav class="navbar">
+
+        <!-- Logo -->
+        <a href="index.html" class="logo">
+
+            <!-- <div class="logo-icon">
+                C
+            </div> -->
+
+            <span class="logo-text">
+                Campus<span>Flow</span>
+            </span>
+
+        </a>
+
+
+        <!-- Right Navigation -->
+        <div class="nav-links">
+
+            <a href="#about" class="about">
+                About Us
+            </a>
+
+            <div id="auth-actions" class="auth-actions" hidden>
+                <a href="sign_in.html" class="btn signin">
+                    Sign In
+                </a>
+
+                <a href="sign_up.html" class="btn signup">
+                    Sign Up
+                </a>
+            </div>
+
+            <button id="navbar-profile" class="navbar-profile" type="button" hidden>
+                <span class="navbar-avatar" aria-hidden="true">
+                    <i data-lucide="user-round"></i>
+                </span>
+                <span id="navbar-fullname"></span>
+            </button>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ========================================
+         SIDEBAR
+    ========================================= -->
+
+    <aside id="primary-sidebar" class="sidebar">
+        <!-- Main Navigation -->
+        <div class="sidebar-main">
+
+
+            <!-- Dashboard -->
+
+            <button
+                class="sidebar-item active"
+                data-page="dashboard">
+
+                <i data-lucide="layout-dashboard"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </button>
+
+
+
+            <!-- Course Knowledge -->
+
+            <button
+                class="sidebar-item"
+                data-page="knowledge">
+
+                <i data-lucide="library"></i>
+
+                <span>
+                    Course Knowledge
+                </span>
+
+            </button>
+
+
+
+            <!-- Study & Exam Prep -->
+
+            <button
+                class="sidebar-item"
+                data-page="study">
+
+                <i data-lucide="brain"></i>
+
+                <span>
+                    Study & Exam Prep
+                </span>
+
+            </button>
+
+
+
+            <!-- Calendar -->
+
+            <button
+                class="sidebar-item"
+                data-page="calendar">
+
+                <i data-lucide="calendar"></i>
+
+                <span>
+                    Calendar
+                </span>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- Bottom Navigation -->
+
+        <div class="sidebar-bottom">
+
+
+            <!-- Account -->
+
+            <button
+                class="sidebar-item"
+                data-page="account">
+
+                <i data-lucide="user-round"></i>
+
+                <span>
+                    Account
+                </span>
+
+            </button>
+
+
+
+            <!-- Messages -->
+
+            <!-- <button
+                class="sidebar-item"
+                data-page="messages">
+
+                <i data-lucide="mail"></i>
+
+                <span>
+                    Messages
+                </span>
+
+            </button> -->
+
+
+
+            <!-- Help -->
+
+            <!-- <button
+                class="sidebar-item"
+                data-page="support">
+
+                <i data-lucide="circle-help"></i>
+
+                <span>
+                    Help & Support
+                </span>
+
+            </button> -->
+
+        </div>
+
+        <button id="sidebar-close" class="sidebar-toggle sidebar-close" type="button"
+            aria-label="Close sidebar" title="Close sidebar" aria-controls="primary-sidebar" aria-expanded="true">
+            <i data-lucide="panel-left-close" aria-hidden="true"></i>
+        </button>
+    </aside>
+
+    <button id="sidebar-open" class="sidebar-toggle sidebar-open" type="button" hidden
+        aria-label="Open sidebar" title="Open sidebar" aria-controls="primary-sidebar" aria-expanded="false">
+        <i data-lucide="panel-left-open" aria-hidden="true"></i>
+    </button>
+
+
+
+    <!-- ========================================
+         MAIN CONTENT
+    ========================================= -->
+
+    <main id="content">
+
+        <!-- Dashboard will be loaded here -->
+
+    </main>
+
+
+
+    <!-- JavaScript -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

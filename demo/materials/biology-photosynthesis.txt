@@ -1,0 +1,9 @@
+FICTIONAL DEMO MATERIAL
+Course: BIO101 - Introductory Biology
+Lecture: Photosynthesis
+
+Photosynthesis converts light energy into chemical energy. In plants it occurs in chloroplasts. Chlorophyll absorbs light.
+Light-dependent reactions occur in thylakoid membranes. They produce ATP and NADPH and release oxygen from water.
+The Calvin cycle occurs in the stroma. It uses ATP and NADPH to support carbon fixation from carbon dioxide.
+Plants also carry out cellular respiration. Photosynthesis and respiration are distinct processes.
+Common misconception: the oxygen released during photosynthesis comes from carbon dioxide. It comes from water.
