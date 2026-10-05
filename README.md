@@ -179,6 +179,7 @@ For an existing database, apply only missing migrations. Earlier migrations crea
 | Variable | Purpose |
 | --- | --- |
 | `OPENROUTER_API_KEY` | Server-side OpenRouter credential |
+| `OPENROUTER_MODEL` | Optional model ID; defaults to `openrouter/free` |
 | `CAMPUSFLOW_PUBLISHABLE_KEY` | Browser publishable key for the same Supabase project, used to verify user sessions |
 | `ALLOWED_ORIGIN` | Exact allowed frontend origin, such as `http://localhost:5500` |
 | `AI_TASK_TIMEOUT_MS` | Optional generation timeout; default `90000` |
@@ -187,7 +188,9 @@ For an existing database, apply only missing migrations. Earlier migrations crea
 
 Hosted Supabase Edge Functions provide `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. The latter is used only by the backend to reserve and finish AI tasks. A different runtime or test harness must provide the required environment explicitly.
 
-Both handlers declare their OpenRouter model in source. Verify that it is available to your provider account before using the application.
+Both handlers read `OPENROUTER_MODEL` on each request. When it is unset, they use `openrouter/free`, which routes to available free models supporting the required features, including JSON output. To choose a specific model, set its full OpenRouter ID in Supabase Edge Function secrets; no source edit is needed after deploying these handlers. Confirm the selected model is available to your account and supports the request parameters and token limits. An empty or malformed setting fails before reserving quota. A custom model may incur provider charges.
+
+The free router can select different models across requests, with varying quality, latency, and availability. OpenRouter rate limits apply separately from CampusFlow's per-user quotas. See the [Free Models Router documentation](https://openrouter.ai/docs/guides/routing/routers/free-router).
 
 ### 4. Deploy the Edge Functions
 
@@ -242,13 +245,13 @@ Publishing the frontend does not deploy Edge Functions or execute database migra
 npm test
 ```
 
-The suite contains **89 automated tests**:
+The suite contains **94 automated tests**:
 
 | Coverage | Tests |
 | --- | --- |
 | Study and course-analysis behavior | 22 |
 | Authentication and rejection paths | 18 |
-| AI quotas, retries, timeouts, call budgets, and safe provider diagnostics | 32 |
+| AI quotas, retries, timeouts, call budgets, model configuration, PDF transport, and safe provider diagnostics | 37 |
 | PostgreSQL quota logic and permissions | 12 |
 | Safe user-facing error messages | 5 |
 
@@ -274,7 +277,7 @@ npx playwright install chromium
 npm run test:ui
 ```
 
-The browser suite uses mocked Supabase responses to exercise study conversations, quiz explanations, persistence retries, and responsive layouts. It does not write to the hosted project and is separate from the 89-test suite.
+The browser suite uses mocked Supabase responses to exercise study conversations, quiz explanations, persistence retries, and responsive layouts. It does not write to the hosted project and is separate from the 94-test suite.
 
 ## Known limitations
 
