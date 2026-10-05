@@ -57,6 +57,9 @@ async function invoke(handler, options = {}) {
     }
     assert.equal(url, "https://openrouter.ai/api/v1/chat/completions");
     const index = providerCalls++;
+    if (body.model === options.unavailableModel) {
+      return Response.json({ error: { code: 404, message: "Model unavailable" } }, { status: 404 });
+    }
     if (options.stallBody) {
       return { ok: true, status: 200, headers: new Headers(), json: () =>
         new Promise((_, reject) => init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true })) };
@@ -79,6 +82,9 @@ async function invoke(handler, options = {}) {
     form.append("prompt", options.invalidInput ? "" : options.prompt ?? "Teach me photosynthesis");
     form.append("mode", options.mode ?? "chat");
     form.append("user_id", "attacker-supplied-user");
+    if (options.pdf) {
+      form.append("file", new File(["%PDF-1.7\nMock PDF transport fixture"], "notes.pdf", { type: "application/pdf" }));
+    }
     if (handler === analyzeHandler && !options.invalidInput) {
       form.append("file", new File(["Plants use light."], "notes.txt", { type: "text/plain" }));
     }
@@ -93,6 +99,28 @@ function release(result) { return result.calls.find(({ url }) => url.endsWith("/
 function assertNoAI(result) { assert.equal(result.providerCalls, 0); }
 
 for (const [name, handler] of [["study", studyHandler], ["analysis", analyzeHandler]]) {
+  test(`${name}: replaces the unavailable model and reads model overrides per request`, async () => {
+    const fallback = await invoke(handler, { unavailableModel: "stealth/space-bunny-alpha" });
+    assert.equal(fallback.status, 200);
+    assert.equal(fallback.calls.find(({ url }) => url.endsWith("/chat/completions")).body.model, "openrouter/free");
+    const configured = await invoke(handler, { environment: { OPENROUTER_MODEL: " nvidia/nemotron-3-super-120b-a12b:free " } });
+    assert.equal(configured.status, 200);
+    assert.equal(configured.calls.find(({ url }) => url.endsWith("/chat/completions")).body.model,
+      "nvidia/nemotron-3-super-120b-a12b:free");
+  });
+
+  test(`${name}: invalid model configuration fails before quota and generation`, async () => {
+    for (const OPENROUTER_MODEL of ["", "   ", "https://example.test/model", "missing-slash", "provider/model\nprivate-text",
+      `provider/${"x".repeat(121)}`]) {
+      const result = await invoke(handler, { environment: { OPENROUTER_MODEL } });
+      assert.equal(result.status, 500);
+      assert.equal(result.body.code, "ai_configuration_error");
+      assertNoAI(result);
+      assert.equal(result.calls.length, 1);
+      assert.doesNotMatch(JSON.stringify(result.body), /example\.test|private-text|missing-slash/);
+    }
+  });
+
   test(`${name}: quota denials return 429 and a retry time without calling AI`, async () => {
     for (const reason of ["minute_limit", "daily_limit", "concurrent_limit"]) {
       const result = await invoke(handler, { quota: { allowed: false, reason, retry_after: 20 } });
@@ -157,7 +185,7 @@ for (const [name, handler] of [["study", studyHandler], ["analysis", analyzeHand
       const result = await invoke(handler, { outputs: [{ status }] });
       assert.equal(result.status, 502);
       assert.deepEqual(logs, [["AI provider request failed", {
-        status, providerCode: status, model: "stealth/space-bunny-alpha",
+        status, providerCode: status, model: "openrouter/free",
       }]]);
       const visible = JSON.stringify({ logs, response: result.body });
       assert.doesNotMatch(visible, /Provider details|test-provider-key|test-service-key|photosynthesis|valid-token/);
@@ -176,7 +204,7 @@ for (const [name, handler] of [["study", studyHandler], ["analysis", analyzeHand
       assert.equal(result.status, 502);
       assert.equal(result.providerCalls, 1);
       assert.deepEqual(logs, [["AI provider request failed", {
-        status: 200, providerCode: typeof code === "number" ? code : null, model: "stealth/space-bunny-alpha",
+        status: 200, providerCode: typeof code === "number" ? code : null, model: "openrouter/free",
       }]]);
       assert.doesNotMatch(JSON.stringify({ logs, response: result.body }), /private-/);
       assert.equal(release(result).p_outcome, "failed");
@@ -250,6 +278,25 @@ for (const [name, handler] of [["study", studyHandler], ["analysis", analyzeHand
     assert.equal(release(result).p_outcome, "failed");
   });
 }
+
+test("PDF quiz requests use the replacement model and preserve PDF transport", async () => {
+  const result = await invoke(studyHandler, {
+    mode: "quiz", prompt: "Create a quiz with 1 question", pdf: true,
+    unavailableModel: "stealth/space-bunny-alpha",
+    outputs: [{ output: { quiz: { title: "Biology", questions: [{
+      question: "What powers photosynthesis?", options: ["Sunlight", "Wind", "Sound", "Gravity"],
+      correctIndex: 0, explanation: "Light supplies the energy.",
+    }] } } }],
+  });
+  assert.equal(result.status, 200);
+  assert.equal(result.body.quiz.questions.length, 1);
+  const body = result.calls.find(({ url }) => url.endsWith("/chat/completions")).body;
+  assert.equal(body.model, "openrouter/free");
+  assert.deepEqual(body.plugins, [{ id: "file-parser", pdf: { engine: "cloudflare-ai" } }]);
+  const part = body.messages.at(-1).content.find(part => part.type === "file");
+  assert.equal(Buffer.from(part.file.file_data.split(",")[1], "base64").toString(), "%PDF-1.7\nMock PDF transport fixture");
+  assert.equal(release(result).p_outcome, "succeeded");
+});
 
 test("HTTP retries and quiz output repair consume one common provider-call budget", async (t) => {
   t.mock.timers.enable({ apis: ["setTimeout", "Date"] });
