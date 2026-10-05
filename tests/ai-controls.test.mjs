@@ -67,10 +67,11 @@ async function invoke(handler, options = {}) {
     const output = options.outputs?.[index] ?? { output: normalOutput };
     if (output.networkError) throw new Error("Network unavailable");
     if (output.status && output.status !== 200) {
-      return Response.json({ error: { message: "Provider details must not leak" } }, {
+      return Response.json({ error: { code: output.status, message: "Provider details must not leak" } }, {
         status: output.status, headers: output.headers,
       });
     }
+    if (output.providerError) return Response.json({ error: output.providerError });
     return Response.json({ choices: [{ message: { content: JSON.stringify(output.output ?? normalOutput) } }] });
   };
   try {
@@ -146,6 +147,40 @@ for (const [name, handler] of [["study", studyHandler], ["analysis", analyzeHand
     assert.equal(result.providerCalls, 1);
     assert.equal(release(result).p_outcome, "failed");
     assert.doesNotMatch(result.body.error, /Provider details/);
+  });
+
+  test(`${name}: backend logs preserve provider status without exposing private data`, async (t) => {
+    const logs = [];
+    t.mock.method(console, "error", (...args) => logs.push(args));
+    for (const status of [400, 401, 402, 404]) {
+      logs.length = 0;
+      const result = await invoke(handler, { outputs: [{ status }] });
+      assert.equal(result.status, 502);
+      assert.deepEqual(logs, [["AI provider request failed", {
+        status, providerCode: status, model: "stealth/space-bunny-alpha",
+      }]]);
+      const visible = JSON.stringify({ logs, response: result.body });
+      assert.doesNotMatch(visible, /Provider details|test-provider-key|test-service-key|photosynthesis|valid-token/);
+      assert.equal(result.body.code, "ai_provider_error");
+    }
+  });
+
+  test(`${name}: HTTP 200 provider errors are logged with safe numeric codes only`, async (t) => {
+    const logs = [];
+    t.mock.method(console, "error", (...args) => logs.push(args));
+    for (const code of [503, "private-document-text"]) {
+      logs.length = 0;
+      const result = await invoke(handler, { outputs: [{ providerError: {
+        code, message: "private-provider-message", metadata: { raw: "private-document-text" },
+      } }] });
+      assert.equal(result.status, 502);
+      assert.equal(result.providerCalls, 1);
+      assert.deepEqual(logs, [["AI provider request failed", {
+        status: 200, providerCode: typeof code === "number" ? code : null, model: "stealth/space-bunny-alpha",
+      }]]);
+      assert.doesNotMatch(JSON.stringify({ logs, response: result.body }), /private-/);
+      assert.equal(release(result).p_outcome, "failed");
+    }
   });
 
   test(`${name}: retries transient provider errors within the shared budget`, async (t) => {
