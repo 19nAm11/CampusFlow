@@ -85,6 +85,14 @@ function record(value: unknown): Record<string, unknown> | null {
     ? value as Record<string, unknown> : null;
 }
 
+function openRouterModel(): string {
+  const model = (Deno.env.get("OPENROUTER_MODEL") ?? "openrouter/free").trim();
+  if (model.length > 120 || !/^[a-z0-9][a-z0-9_.-]*\/[a-z0-9][a-z0-9_.:-]*$/i.test(model)) {
+    throw new AiControlError("The AI model is not configured correctly.", 500, "ai_configuration_error");
+  }
+  return model;
+}
+
 async function quotaRpc(name: string, body: Record<string, unknown>) {
   const url = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -281,7 +289,6 @@ const maxPdfBytes = 10 * 1024 * 1024;
 const maxTextBytes = 1 * 1024 * 1024;
 const maxBatchBytes = 12 * 1024 * 1024;
 const maxFiles = 8;
-const model = "stealth/space-bunny-alpha";
 
 function corsHeaders(request: Request) {
   const allowedOrigin = Deno.env.get("ALLOWED_ORIGIN");
@@ -421,6 +428,7 @@ Deno.serve(async (request: Request) => {
   let task: AiTask | null = null;
   let succeeded = false;
   try {
+    const model = openRouterModel();
     const form = await request.formData();
     const files = form.getAll("file");
     if (files.length === 0 || files.some((file) => !(file instanceof File))) {
